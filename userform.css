@@ -12,20 +12,24 @@ body {
 
 .container {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   background: white;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 }
 
 .sidebar {
-  width: 300px;
+  width: 100%;
   background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
   color: white;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  z-index: 10;
 }
 
 .logo img {
@@ -106,8 +110,10 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 2rem;
+  padding: 1.5rem;
+  width: 100%;
   overflow-y: auto;
+  background: #f9f9f9;
 }
 
 .form-grid {
@@ -122,15 +128,56 @@ body {
 }
 
 .form-row {
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .form-row.double {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
 }
 
 .form-row.single {
   grid-template-columns: 1fr;
+}
+
+/* Tablet and larger */
+@media (min-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .form-row.double {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    width: 300px;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  .form-row.double {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .form-group {
@@ -152,6 +199,13 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white;
 }
 
 .form-group input:focus,
@@ -169,8 +223,25 @@ body {
 
 .file-input {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.file-input .file-btn {
+  width: 100%;
+  text-align: center;
+}
+
+@media (min-width: 576px) {
+  .file-input {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .file-input .file-btn {
+    width: auto;
+  }
 }
 
 .file-btn {
