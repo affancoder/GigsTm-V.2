@@ -6,9 +6,10 @@
     <title>GigsTm - Analytics Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://gigstm.com/images/logo/favicon.ico" type="image/x-icon">
     <style>
         :root {
-            --primary: #4f46e5;
+            --primary: #0980af;
             --primary-dark: #4338ca;
             --secondary: #10b981;
             --dark: #1f2937;
@@ -265,6 +266,7 @@
 
         .table th {
             background-color: var(--primary);
+            background-color: #0980af !important;
             color: white;
             font-weight: 500;
             text-align: left;
@@ -316,11 +318,53 @@
             font-style: italic;
             color: #666;
         }
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin: 1rem 0;
             font-size: 14px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .table th, 
+        .table td {
+            border-right: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+        }
+        
+        .table th:first-child,
+        .table td:first-child {
+            border-left: none;
+        }
+        
+        .table th:last-child,
+        .table td:last-child {
+            border-right: none;
+        }
+        
+        .preview-btn {
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+        
+        .preview-btn:hover {
+            background-color: var(--primary-dark) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .preview-btn i {
+            font-size: 0.9em;
         }
         th, td {
             padding: 12px 15px;
@@ -679,8 +723,59 @@
                         const td = document.createElement('td');
                         td.style.padding = '0.75rem 1rem';
                         
+                        // Check if the cell contains a URL
+                        if (cell && (cell.startsWith('http://') || cell.startsWith('https://'))) {
+                            const previewBtn = document.createElement('button');
+                            previewBtn.className = 'preview-btn';
+                            previewBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> <span>Preview</span>';
+                            previewBtn.style.padding = '0.35rem 0.75rem';
+                            previewBtn.style.background = 'var(--primary)';
+                            previewBtn.style.color = 'white';
+                            previewBtn.style.border = 'none';
+                            previewBtn.style.borderRadius = '4px';
+                            previewBtn.style.cursor = 'pointer';
+                            previewBtn.style.fontSize = '0.8rem';
+                            previewBtn.style.display = 'flex';
+                            previewBtn.style.alignItems = 'center';
+                            previewBtn.style.gap = '0.5rem';
+                            previewBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                window.open(cell, '_blank');
+                            };
+                            
+                            const tooltip = document.createElement('div');
+                            tooltip.textContent = cell;
+                            tooltip.style.position = 'absolute';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.left = '50%';
+                            tooltip.style.transform = 'translateX(-50%)';
+                            tooltip.style.background = 'rgba(0,0,0,0.8)';
+                            tooltip.style.color = 'white';
+                            tooltip.style.padding = '0.5rem';
+                            tooltip.style.borderRadius = '4px';
+                            tooltip.style.fontSize = '0.8rem';
+                            tooltip.style.whiteSpace = 'nowrap';
+                            tooltip.style.display = 'none';
+                            tooltip.style.zIndex = '1000';
+                            
+                            const container = document.createElement('div');
+                            container.style.position = 'relative';
+                            container.style.display = 'inline-block';
+                            container.appendChild(previewBtn);
+                            container.appendChild(tooltip);
+                            
+                            previewBtn.onmouseenter = () => {
+                                tooltip.style.display = 'block';
+                            };
+                            
+                            previewBtn.onmouseleave = () => {
+                                tooltip.style.display = 'none';
+                            };
+                            
+                            td.appendChild(container);
+                        } 
                         // Format dates if needed
-                        if (headers[index].toLowerCase().includes('date') && cell) {
+                        else if (headers[index].toLowerCase().includes('date') && cell) {
                             try {
                                 const date = new Date(cell);
                                 if (!isNaN(date.getTime())) {
