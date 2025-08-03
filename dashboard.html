@@ -111,7 +111,7 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            /* height: 100vh; */
             overflow: hidden;
         }
 
@@ -451,7 +451,7 @@
         <header class="header">
             <div class="page-title">
                 <h1>Dashboard Overview</h1>
-                <p>Welcome back! Here's what's happening with your data.</p>
+                <!-- <p>Welcome back! Here's what's happening with your data.</p> -->
             </div>
             <button id="refresh-btn" class="btn btn-primary">
                 <i class="fas fa-sync-alt"></i>
@@ -650,26 +650,121 @@
                     return;
                 }
                 
-                // Add search and filter controls
+                // Add search and filter controls with improved styling
                 const searchBox = `
-                    <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <div style="position: relative; flex: 1; min-width: 250px;">
-                            <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
-                            <input type="text" id="search-input" placeholder="Search in all columns..." 
-                                style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem; 
-                                       border: 1px solid var(--gray-200); 
-                                       border-radius: 0.5rem;
-                                       font-size: 0.875rem;">
+                    <div class="table-controls" style="margin-bottom: 1.5rem; background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--gray-100);">
+                        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+                            <div class="search-container" style="position: relative; flex: 1; min-width: 250px;">
+                                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-500); pointer-events: none;"></i>
+                                <input type="text" 
+                                    id="search-input" 
+                                    class="search-input"
+                                    placeholder="Search in all columns..." 
+                                    style="
+                                        width: 100%; 
+                                        padding: 0.6rem 1rem 0.6rem 2.5rem; 
+                                        border: 1px solid var(--gray-200);
+                                        border-radius: 0.5rem;
+                                        font-size: 0.9rem;
+                                        transition: all 0.2s ease;
+                                    ">
+                            </div>
+                            
+                            <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: center; min-width: 300px;">
+                                <select 
+                                    id="column-filter" 
+                                    class="column-select"
+                                    style="
+                                        flex: 1;
+                                        padding: 0.6rem 1rem;
+                                        border: 1px solid var(--gray-200);
+                                        border-radius: 0.5rem;
+                                        font-size: 0.9rem;
+                                        background-color: white;
+                                        cursor: pointer;
+                                        appearance: none;
+                                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                                        background-repeat: no-repeat;
+                                        background-position: right 0.75rem center;
+                                        background-size: 1em auto;
+                                    ">
+                                    <option value="">Filter by Column</option>
+                                    ${rows[0].map((header, index) => 
+                                        `<option value="${index}">${header}</option>`
+                                    ).join('')}
+                                </select>
+                                
+                                <button 
+                                    id="clear-filters" 
+                                    class="clear-btn"
+                                    type="button"
+                                    style="
+                                        padding: 0.6rem 1rem;
+                                        background: white;
+                                        border: 1px solid var(--gray-200);
+                                        border-radius: 0.5rem;
+                                        color: var(--gray-700);
+                                        font-size: 0.9rem;
+                                        font-weight: 500;
+                                        cursor: pointer;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        transition: all 0.2s ease;
+                                        white-space: nowrap;
+                                    ">
+                                    <i class="fas fa-times"></i>
+                                    <span>Clear</span>
+                                </button>
+                            </div>
+                            
+                            <div id="result-count" class="result-count" style="margin-left: auto; color: var(--gray-600); font-size: 0.875rem; white-space: nowrap;">
+                                ${rows.length - 1} records found
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: center; min-width: 300px;">
-                            <select id="column-filter" style="padding: 0.5rem; border: 1px solid var(--gray-200); border-radius: 0.5rem; font-size: 0.875rem; flex: 1;">
-                                <option value="">All Columns</option>
-                                ${rows[0].map((header, index) => 
-                                    `<option value="${index}">${header}</option>`
-                                ).join('')}
-                            </select>
-                            <button id="clear-filters" style="padding: 0.5rem 1rem; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; white-space: nowrap;">
-                                <i class="fas fa-times"></i> Clear
+                        
+                        <style>
+                            .search-input:focus {
+                                outline: none;
+                                border-color: var(--primary) !important;
+                                box-shadow: 0 0 0 3px rgba(9, 128, 175, 0.1);
+                            }
+                            
+                            .search-input::placeholder {
+                                color: var(--gray-400);
+                            }
+                            
+                            .column-select:focus {
+                                outline: none;
+                                border-color: var(--primary) !important;
+                                box-shadow: 0 0 0 3px rgba(9, 128, 175, 0.1);
+                            }
+                            
+                            .clear-btn:hover {
+                                background-color: var(--gray-50) !important;
+                                border-color: var(--gray-300) !important;
+                            }
+                            
+                            .clear-btn:active {
+                                transform: translateY(1px);
+                            }
+                            
+                            @media (max-width: 768px) {
+                                .table-controls {
+                                    padding: 0.75rem !important;
+                                }
+                                
+                                .search-container,
+                                .filter-group {
+                                    min-width: 100% !important;
+                                }
+                                
+                                .result-count {
+                                    margin-top: 0.5rem;
+                                    margin-left: 0 !important;
+                                }
+                            }
+                        </style>
                             </button>
                         </div>
                     </div>
@@ -827,15 +922,18 @@
                 const clearFiltersBtn = document.getElementById('clear-filters');
                 
                 function filterTable() {
-                    const searchTerm = searchInput.value.toLowerCase();
+                    const searchTerm = searchInput.value.trim().toLowerCase();
                     const columnIndex = columnFilter.value === '' ? -1 : parseInt(columnFilter.value);
                     const tableRows = tbody.getElementsByTagName('tr');
+                    let visibleRows = 0;
                     
                     for (let row of tableRows) {
                         let rowContainsSearch = false;
                         
-                        if (searchTerm === '') {
+                        if (searchTerm === '' && columnIndex === -1) {
+                            // No filters applied, show all rows
                             row.style.display = '';
+                            visibleRows++;
                             continue;
                         }
                         
@@ -856,19 +954,54 @@
                             }
                         }
                         
-                        row.style.display = rowContainsSearch ? '' : 'none';
+                        // Apply the display style
+                        const shouldShow = searchTerm === '' || rowContainsSearch;
+                        row.style.display = shouldShow ? '' : 'none';
+                        if (shouldShow) visibleRows++;
+                    }
+                    
+                    // Update result count
+                    const resultCount = document.getElementById('result-count');
+                    if (resultCount) {
+                        resultCount.textContent = `${visibleRows} of ${rows.length - 1} records`;
+                        resultCount.style.fontWeight = '500';
+                        resultCount.style.color = visibleRows === 0 ? '#dc2626' : 'var(--gray-700)';
                     }
                 }
                 
                 if (searchInput && columnFilter && clearFiltersBtn) {
-                    searchInput.addEventListener('input', filterTable);
+                    // Add event listeners with debounce for better performance
+                    let searchTimeout;
+                    searchInput.addEventListener('input', () => {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(filterTable, 300);
+                    });
+                    
+                    // Add input event for immediate feedback on mobile
+                    searchInput.addEventListener('keyup', () => {
+                        clearTimeout(searchTimeout);
+                        filterTable();
+                    });
+                    
                     columnFilter.addEventListener('change', filterTable);
                     
                     clearFiltersBtn.addEventListener('click', () => {
                         searchInput.value = '';
                         columnFilter.value = '';
                         filterTable();
+                        searchInput.focus();
                     });
+                    
+                    // Add keyboard navigation
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            searchInput.value = '';
+                            filterTable();
+                        }
+                    });
+                    
+                    // Initial filter to show all results
+                    filterTable();
                 }
             }
 
